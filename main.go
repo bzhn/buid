@@ -17,9 +17,9 @@ const (
 	variationF = "f" // stands for files
 
 	// hash to use
-	sha256 = 0
-	sha512 = 1
-	xxh64  = 2
+	sha256 = 1
+	sha512 = 2
+	xxh64  = 3
 
 	SHA256HASHnum = 0 // 00xx
 	SHA512HASHnum = 4 // 01xx
@@ -30,7 +30,7 @@ var hashnum uint
 var pathtofile string
 
 func init() {
-	flag.UintVar(&hashnum, "hash", 0, "Hash to use\n0 for SHA256\n1 for SHA512\n2 for XXH64")
+	flag.UintVar(&hashnum, "hash", 1, "Hash to use\n0 for SHA256\n1 for SHA512\n2 for XXH64")
 	flag.StringVar(&pathtofile, "path", `C:\Program Files\7-Zip\7z.exe`, "Path to file")
 	flag.Parse()
 }
@@ -49,9 +49,9 @@ func UUID(hashToUse uint8, pathToFile string) (string, error) {
 
 	variation = variationF
 
-	// Check that hashToUse is between 0 and 2
-	if hashToUse < 0 || hashToUse > 2 {
-		return "", errors.New("Number of the hash to use is not in the range between 0 and 2")
+	// Check that hashToUse is between 1 and 3
+	if hashToUse < 1 || hashToUse > 3 {
+		return "", errors.New("Number of the hash to use is not in the range between 1 and 3")
 	}
 	// TODO: Check that file exists and accessible
 
@@ -80,5 +80,5 @@ func UUID(hashToUse uint8, pathToFile string) (string, error) {
 		return "", errors.New("wrong number of hash to use")
 	}
 
-	return fmt.Sprintf("%s-%s%s%s%s-%s", tm.Timestamp(), variation, file.SizeApprox(fileSize), file.SizeMod(fileSize), randomhex, hashPart), nil
+	return fmt.Sprintf("%s-%s%s%s%s-%s", tm.Timestamp(), variation, randomhex, file.SizeApprox(fileSize), file.SizeMod(fileSize), hashPart), nil
 }
